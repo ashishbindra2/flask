@@ -1,0 +1,5 @@
+flask
+flask-WTF
+psycopg2-binary==2.9.6
+pymongo
+Flask-SQLAlchemy==3.0.3
