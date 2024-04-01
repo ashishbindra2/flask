@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>edit page - 3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" type="text/javascript"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" /> -->
+
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<div class=" " style=" display: grid; grid-template-columns: auto auto auto;">
+    <div>
+        <!-- Reports -->
+        <div style="max-height: 80vh; overflow-y: auto;">
+
+            {% if mangas %}
+            {% for manga in mangas %}
+            <div class="manga_listing" data-mangaid="{{ manga._id }}">
+                <h4>{{ manga['Manga series'] }} </h4>
+                <h5>{{manga['Author(s)']}}</h5>
+                <h6>{{ manga.Publisher }} </h6>
+                <div class="manga_date">
+                    {{ manga.Serialized }}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            Data is not available!!!
+            {% endif %}
+            <hr>
+        </div><!-- End Reports -->
+    </div><!-- End Left side columns -->
+    <!-- Right side columns -->
+    <div  style="max-height: 80vh; overflow-y: auto;">
+        <div >
+            <form method="post" action="{{ url_for('update_manga') }}" id="mangaForm">
+                <div class="table_btn_top">
+                    <input type="hidden" id="mangaId" name="mangaId" value="">
+                    <button class="" id="saveButton" type="submit" style="display:None;">
+                        Save
+                    </button>
+                    <button class="" type="button" style="display:none;" id="editmanga">
+                        edit
+                    </button>
+
+                </div>
+
+                <div class="">
+                    <table class="table manga_listing_table input_back_none" id="tabelHeader">
+                        <tbody id="outputHeader">
+                        </tbody>
+                    </table>
+                    <div class="manga_listing_detail" id="outputContent">
+                        Output
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var mangaId; // Declare mangaId outside the click event handler
+
+            $('#editmanga').click(function () {
+                $('#editmanga').hide();
+                $('#saveButton').show();
+
+                var element = document.getElementById("tabelHeader");
+                element.classList.remove("input_back_none");
+
+                var inputElements = document.getElementsByTagName("input");
+                var inputArray = Array.from(inputElements);
+
+                inputArray.forEach(function (inputElement) {
+                    inputElement.classList.remove("input_disable");
+                });
+            });
+
+            $(document).on('click', '.manga_listing', function () {
+                mangaId = $(this).data('mangaid');
+                console.log(mangaId)
+                $('#mangaId').val(mangaId);
+                $('#mid').val(mangaId);
+
+                $('#editmanga').show();
+                $('#saveButton').hide();
+
+                $.ajax({
+                    url: '/get_manga_detail/' + mangaId,
+                    type: 'GET',
+                    success: function (data) {
+                        var itemList = [];
+
+                        console.log(data);
+                        console.log(typeof data);
+                        console.log(data['Manga series']);
+                        itemList.push('<tr><td>manga Name</td><td class="tr"><input type="text" id="mangaName" class="input_disable" name="mangaName" value ="' + (data['Manga series'] ? data['Manga series'] : '') + '"></td></tr>');
+                        itemList.push('<tr><td>manga Author</td><td class="tr"><input type="text" id="mangaAuthor" class="input_disable" name="mangaAuthor"  value="' + (data['Author(s)'] ? data["Author(s)"] : '') + '"></td></tr>');
+
+                        itemList.push('<tr><td>Manga Publisher</td><td class="tr Website"> <input class="input_disable" type="text" name="mangaPublisher" id="mangaPublisher" value="' + (data.Publisher ? data.Publisher : '') + '"></td></tr>');
+                        itemList.push('<tr><td>manga Serialized</td> <td class="tr"><input class="input_disable" type="text" name="mangaSerialized" id="mangaSerialized" value="' + (data.Serialized ? data.Serialized : '') + '"></td></tr>');
+
+                        var cardHtml = ''
+                        itemList.forEach(function (item) {
+                            cardHtml += '<tr>' + item + '</tr>';
+                        });
+                        cardHtml += '';
+
+                        $('#outputHeader').html(cardHtml);
+                     //   $('#mangaId').val(data.mangaId);
+                    },
+                    error: function () {
+                        alert('Failed to fetch manga ');
+                    }
+                });
+            });
+        });
+    </script>

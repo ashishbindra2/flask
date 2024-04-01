@@ -1,0 +1,46 @@
+.input_edit {
+    background-color: #e9e8e8 !important;
+    border: 1px solid #ddd !important;
+}
+
+.dn {
+    display: none;
+}
+
+.show {
+    color: #00293D;
+}
+
+.hide {
+    color: #36B419;
+}
+
+.input_back_none input {
+    background: transparent !important;
+    text-align: right;
+    border: 0;
+}
+
+input::placeholder {
+    color: #00293D !important;
+    opacity: 1 !important;
+    font-size: 16px;
+}
+
+.Website input::placeholder {
+    color: #009DE2 !important;
+}
+
+.job_listing_table td {
+    width: 50%;
+}
+
+input:focus-visible {
+    outline: none !important;
+}
+
+p {
+    margin-bottom: 7px;
+    font-size: 14px;
+    color: #5B5B5B;
+}
