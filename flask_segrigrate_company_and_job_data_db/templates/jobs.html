@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jobs</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.7.1.js" type="text/javascript"></script>
+  <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" /> -->
+
+  <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+  <h1 style="text-align: center;">list of jobs</h1>
+  <a href="{{url_for('index')}}">add</a>
+  <table id="myTable" class="display input_back_none" style="width: 86%;">
+    <thead>
+      <tr>
+        <th>job Name</th>
+        <th>job size</th>
+        <th>job address</th>
+        <th>job mobile</th>
+        <th>job email</th>
+        <th>job tag</th>
+        <th>job url</th>
+        <th>job locations</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for job in jobs%}
+      <tr>
+        <td>{{job.job_title}}</td>
+        <td>{{job.salary_range}}</td>
+        <td>{{job.location}}</td>
+        <td>{{job.tags}}</td>
+        <td>{{job.date_of_post}}</td>
+        <td>{{job.work_experience}}</td>
+        <td>{{job.job_language}}</td>
+        <td>{{job.date_of_scrap}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+  <script>
+    new DataTable('#myTable');
+  </script>
+
+
+</body>
+
+</html>
