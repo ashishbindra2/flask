@@ -33,7 +33,6 @@ def company_exists(company_name):
     
 def is_company_location(cid,company_location):
     try:
-        print("in")
         result = comapny_collection.find_one({"_id": ObjectId(cid)} ,{"company_location":   1})
         if result is not None and "company_location" in result:
             # Document exists and has the company_location field
