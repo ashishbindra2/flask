@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}New Post{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="title">Title</label>
+    <input name="name" id="title" value="{{ request.form['name'] }}" required>
+
+    <label for="status">status</label>
+     <select id="status">
+      <option>{{ request.form['status'] </option>
+      <option name="status">complete</option>
+      <option name="status" default>in-process</option>
+      <option name="status">pending</option>
+    </select>
+
+    <label for="pt">priority</label>
+    <select id="pt">
+      <option>{{ request.form['priority'] }}</option>
+      <option name="priority" >High</option>
+      <option name="priority" default>Medium</option>
+      <option name="priority">low</option>
+    </select>
+    <input type="submit" value="Save">
+  </form>
+{% endblock %}
