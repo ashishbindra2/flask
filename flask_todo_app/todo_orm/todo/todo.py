@@ -17,7 +17,7 @@ def index():
         ' FROM task t JOIN user u ON t.task_id = u.id'
         ' ORDER BY created DESC'
     ).fetchall()
-    print(todo)
+    
     return render_template('task/index.html', todo=todo)
 
 
@@ -25,54 +25,60 @@ def index():
 @login_required
 def create():
     if request.method == 'POST':
-        title = request.form['name']
-        status = request.form.getlist('status')
-        priority = request.form.getlist('priority')
+        title = request.form.get('name')
+        status = request.form.get('status')
+        priority = request.form.get('priority')
         error = None
 
+        print(title)
+        print(status)
+        print(priority)
         if not title:
             error = 'Title is required.'
 
+        if not status:
+            error = "Status is required"
         if error is not None:
             flash(error)
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO task (title, body, author_id)'
-                ' VALUES (?, ?, ?)',
+                'INSERT INTO task (name, status,priority, task_id)'
+                ' VALUES (?, ?, ?, ?)',
                 (title, status, priority, g.user['id'])
             )
             db.commit()
-            return redirect(url_for('task.index'))
+            return redirect(url_for('todo.index'))
 
     return render_template('task/create.html')
 
 
 def get_post(id, check_author=True):
-    post = get_db().execute(
-        'SELECT p.id, title, body, created, author_id, username'
-        ' FROM post p JOIN user u ON p.author_id = u.id'
-        ' WHERE p.id = ?',
+    task = get_db().execute(
+        'SELECT t.id, name, status, priority, created, task_id, username'
+        ' FROM task t JOIN user u ON t.task_id = u.id'
+        ' WHERE t.id = ?',
         (id,)
     ).fetchone()
 
-    if post is None:
-        abort(404, f"Post id {id} doesn't exist.")
+    if task is None:
+        abort(404, f"Task id {id} doesn't exist.")
 
-    if check_author and post['author_id'] != g.user['id']:
+    if check_author and task['task_id'] != g.user['id']:
         abort(403)
 
-    return post
+    return task
 
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
 def update(id):
-    post = get_post(id)
+    task = get_post(id)
 
     if request.method == 'POST':
-        title = request.form['title']
-        body = request.form['body']
+        title = request.form.get('name')
+        status = request.form.get('status')
+        priority = request.form.get('priority')
         error = None
 
         if not title:
@@ -83,14 +89,14 @@ def update(id):
         else:
             db = get_db()
             db.execute(
-                'UPDATE post SET title = ?, body = ?'
+                'UPDATE task SET name = ?, status = ?,priority = ? '
                 ' WHERE id = ?',
-                (title, body, id)
+                (title, status,priority, id)
             )
             db.commit()
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('todo.index'))
 
-    return render_template('blog/update.html', post=post)
+    return render_template('task/update.html', task=task)
 
 
 @bp.route('/<int:id>/delete', methods=('POST',))
@@ -98,6 +104,6 @@ def update(id):
 def delete(id):
     get_post(id)
     db = get_db()
-    db.execute('DELETE FROM post WHERE id = ?', (id,))
+    db.execute('DELETE FROM task WHERE id = ?', (id,))
     db.commit()
-    return redirect(url_for('blog.index'))
+    return redirect(url_for('todo.index'))
